@@ -1,0 +1,11 @@
+{
+  "name": "exterminate-server",
+  "version": "1.0.0",
+  "description": "Exterminate server side project",
+  "main": "index.js",
+  "repository": "https://github.com/D34THWINGS/exterminate-server",
+  "license": "Creartive Commons",
+  "dependencies": {
+    "socket.io": "^1.7.2"
+  }
+}
