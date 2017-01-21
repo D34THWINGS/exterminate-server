@@ -3,11 +3,11 @@ import io from 'socket.io-client';
 import qs from 'qs';
 
 import { ORDERS_AMOUNT } from '../../shared/constants';
+import OrdersScreen from './orders-screen';
 
 const { clientWidth, clientHeight } = document.body;
 
 const CARDS_PER_ROW = 4;
-const ORDERS_PER_ROW = 2;
 
 export default class ExterminateClient {
   constructor(host) {
@@ -36,16 +36,7 @@ export default class ExterminateClient {
 
     this.game.camera.setPosition(0, 0);
 
-    this.ordersScreen = this.game.add.group();
-    this.selectedSeparator = this.game.add.graphics(0, 0, this.ordersScreen)
-      .moveTo((3 / 4) * clientWidth, 0)
-      .lineStyle(3, 0xffffff)
-      .lineTo((3 / 4) * clientWidth, clientHeight);
-    this.selectedText = this.game.add.text(((3 / 4) * clientWidth) + 30, 30, 'Selected:', {
-      fill: 'white',
-    }, this.ordersScreen);
-
-    this.ordersScreen.visible = false;
+    this.ordersScreen = new OrdersScreen(this.game);
   }
 
   update() {
@@ -66,13 +57,9 @@ export default class ExterminateClient {
   handleDeck(deck) {
     if (this.availableMoves) {
       this.availableMoves.destroy();
-      this.selectedOrders.destroy();
-      this.selectedOrders = null;
     }
 
-    this.selectedText.x = ((3 / 4) * clientWidth) + 30;
-    this.selectedSeparator.visible = true;
-    this.ordersScreen.visible = true;
+    this.ordersScreen.editMode();
 
     this.ordersCount = 0;
     this.availableMoves = this.game.add.group();
@@ -95,14 +82,7 @@ export default class ExterminateClient {
   handleOrderClick(order, icon) {
     icon.destroy();
 
-    if (!this.selectedOrders) {
-      this.selectedOrders = this.game.add.group(this.ordersScreen);
-    }
-
-    const size = (((1 / 4) * clientWidth) - (ORDERS_PER_ROW * 10)) / ORDERS_PER_ROW;
-    const x = ((this.ordersCount % ORDERS_PER_ROW) * (size + 10)) + 5 + ((3 / 4) * clientWidth);
-    const y = (Math.floor(this.ordersCount / ORDERS_PER_ROW) * (size + 10)) + 85;
-    this.game.add.sprite(x, y, order, null, this.selectedOrders);
+    this.ordersScreen.addSelectedOrder(order, this.ordersCount);
 
     this.ordersCount += 1;
     if (this.ordersCount >= ORDERS_AMOUNT) {
@@ -116,14 +96,6 @@ export default class ExterminateClient {
     this.availableMoves.destroy();
     this.availableMoves = null;
 
-    this.selectedText.x = 30;
-    this.selectedSeparator.visible = false;
-
-    const size = (clientWidth - (ORDERS_AMOUNT * 10)) / ORDERS_AMOUNT;
-    this.selectedOrders.children.forEach((child, i) => {
-      child.width = child.height = size;
-      child.x = ((i % ORDERS_AMOUNT) * (size + 10)) + 5;
-      child.y = (Math.floor(i / ORDERS_AMOUNT) * (size + 10)) + 85;
-    });
+    this.ordersScreen.viewMode();
   }
 }
