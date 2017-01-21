@@ -82,11 +82,12 @@ export default class TcpSocket {
   sendGameStart(players) {
     this.socket.write(ServerEvents.GAME_STARTED);
     players.forEach(player => this.socket.write(`.${player.id}`));
-    this.socket.end();
+    this.socket.write('\n');
   }
 
   sendPlayerOrders(players) {
     this.socket.write(ServerEvents.PLAYER_ORDERS);
     players.forEach(player => this.socket.write(`.${player.id}.${player.getOrdersAsString()}`));
+    this.socket.write('\n');
   }
 }

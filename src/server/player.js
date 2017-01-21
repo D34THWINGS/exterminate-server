@@ -1,6 +1,6 @@
 import uuid from 'uuid/v4';
 
-import { ORDERS_AMOUNT } from './constants';
+import { ORDERS_AMOUNT, MOVES } from '../shared/constants';
 
 export default class Player {
   constructor(socket) {
@@ -25,10 +25,10 @@ export default class Player {
   }
 
   isReady() {
-    return this.orders.length === ORDERS_AMOUNT;
+    return this.orders.length >= ORDERS_AMOUNT;
   }
 
   getOrdersAsString() {
-    return this.orders.map(order => `${order.type}:${order.priority}`).join('.');
+    return this.orders.map(order => `${MOVES.indexOf(order.type)}:${order.priority}`).join('.');
   }
 }

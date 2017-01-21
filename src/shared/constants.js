@@ -1,4 +1,4 @@
-export const DECK_SIZE = 7;
+export const DECK_SIZE = 8;
 
 export const CARD_PROPORTIONS = {
   forward1: 100,
@@ -11,3 +11,5 @@ export const CARD_PROPORTIONS = {
 };
 
 export const ORDERS_AMOUNT = 5;
+
+export const MOVES = ['forward1', 'forward2', 'forward3', 'backward', 'left', 'right', 'uturn'];

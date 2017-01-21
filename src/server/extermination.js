@@ -1,5 +1,5 @@
 import Player from './player';
-import { DECK_SIZE, CARD_PROPORTIONS } from './constants';
+import { DECK_SIZE, CARD_PROPORTIONS } from '../shared/constants';
 
 export default class Extermination {
   /**
@@ -21,7 +21,8 @@ export default class Extermination {
   }
 
   startGame() {
-    this.server.webSocket.broadcast('start', {});
+    this.server.httpServer.log('info', 'Game started');
+    this.started = true;
 
     this.players.forEach((player) => {
       const playerDeck = this.generateDeck();
@@ -65,11 +66,18 @@ export default class Extermination {
   }
 
   handleChosenOrder(order, player) {
+    this.server.httpServer.log('info', `Order ${order.type}(${order.priority}) received from player ${player.id}`);
     player.chooseOrder(order);
 
     if (this.isAllPlayerReady()) {
+      this.server.httpServer.log('info', 'All players made their orders, sending orders to board');
       this.server.tcpSocket.sendPlayerOrders(this.players);
     }
+  }
+
+  handleDisconnect(player) {
+    const i = this.players.findIndex(p => p.id === player.id);
+    this.players.splice(i, 1);
   }
 
   newRound() {

@@ -13,7 +13,9 @@ export default class WebsocketServer {
     this.server.httpServer.log('info', 'New Websocket connection');
     const player = this.server.exterminate.addPlayer(socket);
 
-    socket.on('choose', order => this.server.exterminate.handleChosenOrder(order, player));
+    socket
+      .on('disconnect', () => this.server.exterminate.handleDisconnect(player))
+      .on('choose', order => this.server.exterminate.handleChosenOrder(order, player));
   }
 
   broadcast(event, data) {
