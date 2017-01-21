@@ -1,11 +1,16 @@
 import glue from 'glue';
 import path from 'path';
 
-import TcpSocket from './socket';
+import TcpSocket from './tcp-socket';
+import WebsocketServer from './web-socket';
+import Extermination from './extermination';
 
 class ExterminateServer {
   constructor(host, port) {
-    this.socket = new TcpSocket();
+    this.httpServer = null;
+    this.tcpSocket = null;
+    this.webSocket = null;
+    this.exterminate = null;
 
     glue.compose({
       server: {
@@ -57,8 +62,13 @@ class ExterminateServer {
       });
 
       server.start(() => server.log('info', `Server listening on ${host}:${port}`));
+
+      this.httpServer = server;
+      this.tcpSocket = new TcpSocket(this, host, port + 1);
+      this.webSocket = new WebsocketServer(this);
+      this.exterminate = new Extermination(this);
     });
   }
 }
 
-export default new ExterminateServer('localhost', 8080);
+export default new ExterminateServer('192.168.43.128', 8080);
