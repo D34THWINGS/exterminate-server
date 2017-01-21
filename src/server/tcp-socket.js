@@ -44,7 +44,7 @@ export default class TcpSocket {
     socket.on('error', err => this.server.httpServer.log('error', err));
 
     let buffer = [];
-    socket.on('close', () => console.log('TCP socket disconnected'))
+    socket.on('close', () => this.handleSocketClose())
       .pipe(through.obj(function (chunk, enc, cb) {
         chunk.toString().split('.').forEach(value => this.push(value));
         cb();
@@ -62,6 +62,10 @@ export default class TcpSocket {
       .on('error', err => this.server.httpServer.log('error', err.stack));
 
     this.socket = socket;
+  }
+
+  handleSocketClose() {
+    this.server.httpServer.log('info', 'TCP socket disconnected');
   }
 
   /**

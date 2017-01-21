@@ -10,8 +10,6 @@ export default class Extermination {
     this.started = false;
     this.players = [];
     this.stockDeck = [];
-
-    this.shuffleStockDeck();
   }
 
   addPlayer(socket) {
@@ -24,7 +22,10 @@ export default class Extermination {
     this.server.httpServer.log('info', 'Game started');
     this.started = true;
 
+    this.shuffleStockDeck();
+
     this.players.forEach((player) => {
+      player.reset();
       const playerDeck = this.generateDeck();
       player.sendDeck(playerDeck);
     });

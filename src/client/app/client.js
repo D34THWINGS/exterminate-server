@@ -5,7 +5,9 @@ import qs from 'qs';
 import { ORDERS_AMOUNT } from '../../shared/constants';
 
 const { clientWidth, clientHeight } = document.body;
+
 const CARDS_PER_ROW = 4;
+const ORDERS_PER_ROW = 2;
 
 export default class ExterminateClient {
   constructor(host) {
@@ -33,13 +35,23 @@ export default class ExterminateClient {
     this.game.stage.disableVisibilityChange = true;
 
     this.game.camera.setPosition(0, 0);
+
+    this.ordersScreen = this.game.add.group();
+    this.selectedSeparator = this.game.add.graphics(0, 0, this.ordersScreen)
+      .moveTo((3 / 4) * clientWidth, 0)
+      .lineStyle(3, 0xffffff)
+      .lineTo((3 / 4) * clientWidth, clientHeight);
+    this.selectedText = this.game.add.text(((3 / 4) * clientWidth) + 30, 30, 'Selected:', {
+      fill: 'white',
+    }, this.ordersScreen);
+
+    this.ordersScreen.visible = false;
   }
 
   update() {
   }
 
   render() {
-    this.game.debug.cameraInfo(this.game.camera, 32, 32);
   }
 
   handleConnection() {
@@ -54,32 +66,64 @@ export default class ExterminateClient {
   handleDeck(deck) {
     if (this.availableMoves) {
       this.availableMoves.destroy();
+      this.selectedOrders.destroy();
+      this.selectedOrders = null;
     }
+
+    this.selectedText.x = ((3 / 4) * clientWidth) + 30;
+    this.selectedSeparator.visible = true;
+    this.ordersScreen.visible = true;
 
     this.ordersCount = 0;
     this.availableMoves = this.game.add.group();
     deck.forEach((card, i) => {
-      const size = (clientWidth - (CARDS_PER_ROW * 10)) / CARDS_PER_ROW;
+      const size = (((3 / 4) * clientWidth) - (CARDS_PER_ROW * 10)) / CARDS_PER_ROW;
       const x = ((i % CARDS_PER_ROW) * (size + 10)) + 5;
-      const y = (Math.floor(i / CARDS_PER_ROW) * (size + 10)) + 5;
-      const icon = this.game.add.sprite(x, y, card);
+      const y = (Math.floor(i / CARDS_PER_ROW) * (size + 10)) + 85;
+      const icon = this.game.add.sprite(x, y, card, null, this.availableMoves);
       icon.width = size;
       icon.height = size;
       icon.inputEnabled = true;
       icon.events.onInputDown.add(() => this.handleOrderClick(card, icon));
-      this.availableMoves.add(icon);
     });
+
+    this.game.add.text(30, 30, 'Available moves:', {
+      fill: 'white',
+    }, this.availableMoves);
   }
 
   handleOrderClick(order, icon) {
     icon.destroy();
 
+    if (!this.selectedOrders) {
+      this.selectedOrders = this.game.add.group(this.ordersScreen);
+    }
+
+    const size = (((1 / 4) * clientWidth) - (ORDERS_PER_ROW * 10)) / ORDERS_PER_ROW;
+    const x = ((this.ordersCount % ORDERS_PER_ROW) * (size + 10)) + 5 + ((3 / 4) * clientWidth);
+    const y = (Math.floor(this.ordersCount / ORDERS_PER_ROW) * (size + 10)) + 85;
+    this.game.add.sprite(x, y, order, null, this.selectedOrders);
+
     this.ordersCount += 1;
     if (this.ordersCount >= ORDERS_AMOUNT) {
-      this.availableMoves.destroy();
-      this.availableMoves = null;
+      this.handleAllOrdersCompleted();
     }
 
     this.socket.emit('choose', { type: order, priority: Math.floor(Math.random() * 12000) });
+  }
+
+  handleAllOrdersCompleted() {
+    this.availableMoves.destroy();
+    this.availableMoves = null;
+
+    this.selectedText.x = 30;
+    this.selectedSeparator.visible = false;
+
+    const size = (clientWidth - (ORDERS_AMOUNT * 10)) / ORDERS_AMOUNT;
+    this.selectedOrders.children.forEach((child, i) => {
+      child.width = child.height = size;
+      child.x = ((i % ORDERS_AMOUNT) * (size + 10)) + 5;
+      child.y = (Math.floor(i / ORDERS_AMOUNT) * (size + 10)) + 85;
+    });
   }
 }
