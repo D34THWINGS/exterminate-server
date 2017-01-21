@@ -4,10 +4,9 @@ import qs from 'qs';
 
 import { ORDERS_AMOUNT } from '../../shared/constants';
 import OrdersScreen from './orders-screen';
+import DeckScreen from './deck-screen';
 
 const { clientWidth, clientHeight } = document.body;
-
-const CARDS_PER_ROW = 4;
 
 export default class ExterminateClient {
   constructor(host) {
@@ -37,6 +36,8 @@ export default class ExterminateClient {
     this.game.camera.setPosition(0, 0);
 
     this.ordersScreen = new OrdersScreen(this.game);
+    this.deckScreen = new DeckScreen(this.game, this.ordersScreen.group);
+    this.deckScreen.onOrderClick.add(this.handleOrderClick.bind(this));
   }
 
   update() {
@@ -55,28 +56,9 @@ export default class ExterminateClient {
   }
 
   handleDeck(deck) {
-    if (this.availableMoves) {
-      this.availableMoves.destroy();
-    }
-
     this.ordersScreen.editMode();
-
     this.ordersCount = 0;
-    this.availableMoves = this.game.add.group();
-    deck.forEach((card, i) => {
-      const size = (((3 / 4) * clientWidth) - (CARDS_PER_ROW * 10)) / CARDS_PER_ROW;
-      const x = ((i % CARDS_PER_ROW) * (size + 10)) + 5;
-      const y = (Math.floor(i / CARDS_PER_ROW) * (size + 10)) + 85;
-      const icon = this.game.add.sprite(x, y, card, null, this.availableMoves);
-      icon.width = size;
-      icon.height = size;
-      icon.inputEnabled = true;
-      icon.events.onInputDown.add(() => this.handleOrderClick(card, icon));
-    });
-
-    this.game.add.text(30, 30, 'Available moves:', {
-      fill: 'white',
-    }, this.availableMoves);
+    this.deckScreen.generateDeckView(deck);
   }
 
   handleOrderClick(order, icon) {
@@ -93,9 +75,7 @@ export default class ExterminateClient {
   }
 
   handleAllOrdersCompleted() {
-    this.availableMoves.destroy();
-    this.availableMoves = null;
-
+    this.deckScreen.destroyDeckView();
     this.ordersScreen.viewMode();
   }
 }

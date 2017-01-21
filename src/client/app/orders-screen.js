@@ -8,17 +8,17 @@ export default class OrdersScreen {
   constructor(game) {
     this.game = game;
 
-    this.ordersScreen = this.game.add.group();
+    this.group = this.game.add.group();
     this.selectedOrders = null;
-    this.selectedSeparator = this.game.add.graphics(0, 0, this.ordersScreen)
+    this.selectedSeparator = this.game.add.graphics(0, 0, this.group)
       .moveTo((3 / 4) * clientWidth, 0)
       .lineStyle(3, 0xffffff)
       .lineTo((3 / 4) * clientWidth, clientHeight);
     this.selectedText = this.game.add.text(((3 / 4) * clientWidth) + 30, 30, 'Selected:', {
       fill: 'white',
-    }, this.ordersScreen);
+    }, this.group);
 
-    this.ordersScreen.visible = false;
+    this.group.visible = false;
   }
 
   editMode() {
@@ -29,7 +29,7 @@ export default class OrdersScreen {
 
     this.selectedText.x = ((3 / 4) * clientWidth) + 30;
     this.selectedSeparator.visible = true;
-    this.ordersScreen.visible = true;
+    this.group.visible = true;
   }
 
   viewMode() {
@@ -46,7 +46,7 @@ export default class OrdersScreen {
 
   addSelectedOrder(order, ordersCount) {
     if (!this.selectedOrders) {
-      this.selectedOrders = this.game.add.group(this.ordersScreen);
+      this.selectedOrders = this.game.add.group(this.group);
     }
 
     const size = (((1 / 4) * clientWidth) - (ORDERS_PER_ROW * 10)) / ORDERS_PER_ROW;
