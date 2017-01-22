@@ -1,4 +1,4 @@
-import { ORDERS_AMOUNT } from '../../shared/constants';
+import { ORDERS_AMOUNT, MOVES, TRANSITION_TIME } from '../../shared/constants';
 
 const { clientWidth, clientHeight } = document.body;
 
@@ -16,9 +16,11 @@ export default class OrdersScreen {
       .lineTo((3 / 4) * clientWidth, clientHeight);
     this.selectedText = this.game.add.text(((3 / 4) * clientWidth) + 30, 30, 'Selected:', {
       fill: 'white',
+      font: 'Overpass',
+      fontSize: 30,
     }, this.group);
 
-    this.hideScreen();
+    this.hideScreen(true);
   }
 
   editMode() {
@@ -46,12 +48,21 @@ export default class OrdersScreen {
     });
   }
 
-  hideScreen() {
-    this.group.visible = false;
+  hideScreen(instant, cb = () => {}) {
+    if (instant) {
+      this.group.alpha = 0;
+      this.group.visible = false;
+    }
+
+    this.game.add.tween(this.group).to({ alpha: 0 }, TRANSITION_TIME, 'Linear', true).onComplete.addOnce(() => {
+      this.group.visible = false;
+      cb();
+    });
   }
 
-  showScreen() {
+  showScreen(cb = () => {}) {
     this.group.visible = true;
+    this.game.add.tween(this.group).to({ alpha: 1 }, TRANSITION_TIME, 'Linear', true).onComplete.addOnce(cb);
   }
 
   addSelectedOrder(order, priority, ordersCount) {
@@ -62,7 +73,12 @@ export default class OrdersScreen {
     const size = (((1 / 4) * clientWidth) - (ORDERS_PER_ROW * 10)) / ORDERS_PER_ROW;
     const x = ((ordersCount % ORDERS_PER_ROW) * (size + 10)) + 5 + ((3 / 4) * clientWidth);
     const y = (Math.floor(ordersCount / ORDERS_PER_ROW) * (size + 10)) + 85;
-    this.game.add.sprite(x, y, order, null, this.selectedOrders);
-    this.game.add.text(x, y, priority, { fill: 'white' }, this.selectedOrders);
+    const icon = this.game.add.sprite(x, y, 'orders', MOVES.indexOf(order), this.selectedOrders);
+    this.game.add.text(x, y, priority, {
+      fill: 'white',
+      font: 'Overpass',
+      fontSize: 30,
+    }, this.selectedOrders);
+    icon.width = icon.height = size;
   }
 }

@@ -13,3 +13,5 @@ export const CARD_PROPORTIONS = {
 export const ORDERS_AMOUNT = 5;
 
 export const MOVES = ['forward1', 'forward2', 'forward3', 'backward', 'left', 'right', 'uturn'];
+
+export const TRANSITION_TIME = 250;

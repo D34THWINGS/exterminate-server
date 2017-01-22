@@ -6,6 +6,7 @@ import { ORDERS_AMOUNT } from '../../shared/constants';
 import OrdersScreen from './orders-screen';
 import DeckScreen from './deck-screen';
 import SignalScreen from './signal-screen';
+import LoadingScreen from './loading-screen';
 
 const { clientWidth, clientHeight } = document.body;
 
@@ -21,6 +22,7 @@ export default class ExterminateClient {
   }
 
   preload() {
+    this.game.load.spritesheet('orders', 'assets/images/orders.jpg', 200, 200, 7);
     this.game.load.image('backward', 'assets/images/icons/backward.jpg');
     this.game.load.image('forward1', 'assets/images/icons/forward1.jpg');
     this.game.load.image('forward2', 'assets/images/icons/forward2.jpg');
@@ -40,6 +42,7 @@ export default class ExterminateClient {
     this.deckScreen = new DeckScreen(this.game, this.ordersScreen.group);
     this.deckScreen.onOrderClick.add(this.handleOrderClick.bind(this));
     this.signalScreen = new SignalScreen(this.game);
+    this.loadingScreen = new LoadingScreen(this.game);
   }
 
   update() {
@@ -60,6 +63,7 @@ export default class ExterminateClient {
   }
 
   handleDeck(deck) {
+    this.loadingScreen.hideScreen();
     this.ordersScreen.editMode();
     this.ordersCount = 0;
     this.deckScreen.generateDeckView(deck);
@@ -67,8 +71,7 @@ export default class ExterminateClient {
 
   handleOrderClick(order, icon) {
     this.signalScreen.onSignalEnd.addOnce(priority => this.handleSignalCompleted(order, priority, icon));
-    this.ordersScreen.hideScreen();
-    setTimeout(() => this.signalScreen.showScreen(order, this.ordersCount), 300);
+    this.ordersScreen.hideScreen(false, () => this.signalScreen.showScreen(order, this.ordersCount));
   }
 
   handleSignalCompleted(order, priority, icon) {

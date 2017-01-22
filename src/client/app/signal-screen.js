@@ -1,5 +1,7 @@
 import Phaser from 'phaser-ce/build/custom/phaser-split';
 
+import { TRANSITION_TIME } from '../../shared/constants';
+
 const { clientWidth, clientHeight } = document.body;
 
 const POINTS_DENSITY = 1;
@@ -34,6 +36,8 @@ export default class SignalScreen {
 
     this.game.add.text(30, 30, 'Draw electric signal:', {
       fill: 'white',
+      font: 'Overpass',
+      fontSize: 30,
     }, this.group);
 
     this.signalGenerateTime = null;
@@ -42,12 +46,13 @@ export default class SignalScreen {
     this.onSignalEnd = new Phaser.Signal();
   }
 
-  showScreen(order, index) {
+  showScreen(order, index, cb = () => {}) {
     this.generateSignal(order, index);
 
     this.lockedPrecisions = [];
     this.group.visible = true;
     this.signalObject.inputEnabled = true;
+    this.game.add.tween(this.group).to({ alpha: 1 }, TRANSITION_TIME, 'Linear', true).onComplete.addOnce(cb);
 
     this.signalObject.events.onInputDown.addOnce(() => {
       this.signalDrawingEnabled = true;
@@ -66,6 +71,7 @@ export default class SignalScreen {
     const nbPointsInterpolated = Math.round(clientWidth / POINTS_DENSITY);
 
     this.signalPath.clear();
+    this.signalBackgroundMask.clear();
 
     const x = 1 / nbPointsInterpolated;
     for (let i = 0; i <= 1; i += x) {
@@ -105,7 +111,6 @@ export default class SignalScreen {
     }
 
     const percent = Math.min((this.game.time.now - this.signalGenerateTime) / SIGNAL_TIMEOUT, 1);
-    console.log(percent);
     this.signalBackgroundMask
       .beginFill(0xffffff)
       .drawRect(0, 0, clientWidth * percent, clientHeight)
@@ -117,10 +122,11 @@ export default class SignalScreen {
 
     this.signalDrawingEnabled = false;
     this.signalObject.inputEnabled = false;
-    this.group.visible = false;
-    this.signalBackgroundMask.clear();
 
-    setTimeout(() => this.onSignalEnd.dispatch(this.lockedPrecisions.reduce((v, p) => v + p, 0)), 300);
+    this.game.add.tween(this.group).to({ alpha: 0 }, 500, 'Linear', true).onComplete.addOnce(() => {
+      this.group.visible = false;
+      this.onSignalEnd.dispatch(this.lockedPrecisions.reduce((v, p) => v + p, 0));
+    });
   }
 
   static generatePoints(pointsAmount) {
