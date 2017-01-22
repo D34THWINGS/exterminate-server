@@ -29,6 +29,6 @@ export default class Player {
   }
 
   getOrdersAsString() {
-    return this.orders.map(order => `${MOVES.indexOf(order.type)}:${order.priority}`).join('.');
+    return this.orders.map(order => `${MOVES.indexOf(order.type)}:${order.priority}`).join('|');
   }
 }

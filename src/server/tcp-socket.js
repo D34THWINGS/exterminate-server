@@ -3,6 +3,7 @@ import through from 'through2';
 
 const BoardEvents = {
   START_GAME: '0',
+  NEXT_TURN: '1',
 };
 
 const ServerEvents = {
@@ -78,6 +79,8 @@ export default class TcpSocket {
     switch (event) {
       case BoardEvents.START_GAME:
         return this.server.exterminate.startGame(...eventArgs);
+      case BoardEvents.NEXT_TURN:
+        return this.server.exterminate.nextTurn(...eventArgs);
       default:
         return null;
     }
@@ -91,7 +94,7 @@ export default class TcpSocket {
 
   sendPlayerOrders(players) {
     this.socket.write(ServerEvents.PLAYER_ORDERS);
-    players.forEach(player => this.socket.write(`.${player.id}.${player.getOrdersAsString()}`));
+    players.forEach(player => this.socket.write(`.${player.id}|${player.getOrdersAsString()}`));
     this.socket.write('\n');
   }
 }

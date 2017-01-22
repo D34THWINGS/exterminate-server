@@ -26,7 +26,7 @@ export default class DeckScreen {
       icon.width = size;
       icon.height = size;
       icon.inputEnabled = true;
-      icon.events.onInputDown.add(() => this.onOrderClick.dispatch(card, icon));
+      icon.events.onInputDown.addOnce(() => this.onOrderClick.dispatch(card, icon));
     });
 
     this.game.add.text(30, 30, 'Available moves:', {

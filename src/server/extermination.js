@@ -22,13 +22,7 @@ export default class Extermination {
     this.server.httpServer.log('info', 'Game started');
     this.started = true;
 
-    this.shuffleStockDeck();
-
-    this.players.forEach((player) => {
-      player.reset();
-      const playerDeck = this.generateDeck();
-      player.sendDeck(playerDeck);
-    });
+    this.nextTurn();
 
     this.server.tcpSocket.sendGameStart(this.players);
   }
@@ -81,8 +75,14 @@ export default class Extermination {
     this.players.splice(i, 1);
   }
 
-  newRound() {
-    this.players.forEach(player => player.reset());
+  nextTurn() {
+    this.shuffleStockDeck();
+
+    this.players.forEach((player) => {
+      player.reset();
+      const playerDeck = this.generateDeck();
+      player.sendDeck(playerDeck);
+    });
   }
 
   isAllPlayerReady() {

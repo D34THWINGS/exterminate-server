@@ -5,6 +5,7 @@ import qs from 'qs';
 import { ORDERS_AMOUNT } from '../../shared/constants';
 import OrdersScreen from './orders-screen';
 import DeckScreen from './deck-screen';
+import SignalScreen from './signal-screen';
 
 const { clientWidth, clientHeight } = document.body;
 
@@ -38,12 +39,15 @@ export default class ExterminateClient {
     this.ordersScreen = new OrdersScreen(this.game);
     this.deckScreen = new DeckScreen(this.game, this.ordersScreen.group);
     this.deckScreen.onOrderClick.add(this.handleOrderClick.bind(this));
+    this.signalScreen = new SignalScreen(this.game);
   }
 
   update() {
+    this.signalScreen.update();
   }
 
   render() {
+    this.signalScreen.render();
   }
 
   handleConnection() {
@@ -62,16 +66,23 @@ export default class ExterminateClient {
   }
 
   handleOrderClick(order, icon) {
+    this.signalScreen.onSignalEnd.addOnce(priority => this.handleSignalCompleted(order, priority, icon));
+    this.ordersScreen.hideScreen();
+    setTimeout(() => this.signalScreen.showScreen(order, this.ordersCount), 300);
+  }
+
+  handleSignalCompleted(order, priority, icon) {
     icon.destroy();
 
-    this.ordersScreen.addSelectedOrder(order, this.ordersCount);
+    this.ordersScreen.showScreen();
+    this.ordersScreen.addSelectedOrder(order, priority, this.ordersCount);
 
     this.ordersCount += 1;
     if (this.ordersCount >= ORDERS_AMOUNT) {
       this.handleAllOrdersCompleted();
     }
 
-    this.socket.emit('choose', { type: order, priority: Math.floor(Math.random() * 12000) });
+    this.socket.emit('choose', { type: order, priority });
   }
 
   handleAllOrdersCompleted() {

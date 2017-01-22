@@ -18,7 +18,7 @@ export default class OrdersScreen {
       fill: 'white',
     }, this.group);
 
-    this.group.visible = false;
+    this.hideScreen();
   }
 
   editMode() {
@@ -29,7 +29,7 @@ export default class OrdersScreen {
 
     this.selectedText.x = ((3 / 4) * clientWidth) + 30;
     this.selectedSeparator.visible = true;
-    this.group.visible = true;
+    this.showScreen();
   }
 
   viewMode() {
@@ -38,13 +38,23 @@ export default class OrdersScreen {
 
     const size = (clientWidth - (ORDERS_AMOUNT * 10)) / ORDERS_AMOUNT;
     this.selectedOrders.children.forEach((child, i) => {
-      child.width = child.height = size;
-      child.x = ((i % ORDERS_AMOUNT) * (size + 10)) + 5;
-      child.y = (Math.floor(i / ORDERS_AMOUNT) * (size + 10)) + 85;
+      if (i % 2 === 0) {
+        child.width = child.height = size;
+      }
+      child.x = ((((i - (i % 2)) / 2) % ORDERS_AMOUNT) * (size + 10)) + 5;
+      child.y = (Math.floor(((i - (i % 2)) / 2) / ORDERS_AMOUNT) * (size + 10)) + 85;
     });
   }
 
-  addSelectedOrder(order, ordersCount) {
+  hideScreen() {
+    this.group.visible = false;
+  }
+
+  showScreen() {
+    this.group.visible = true;
+  }
+
+  addSelectedOrder(order, priority, ordersCount) {
     if (!this.selectedOrders) {
       this.selectedOrders = this.game.add.group(this.group);
     }
@@ -53,5 +63,6 @@ export default class OrdersScreen {
     const x = ((ordersCount % ORDERS_PER_ROW) * (size + 10)) + 5 + ((3 / 4) * clientWidth);
     const y = (Math.floor(ordersCount / ORDERS_PER_ROW) * (size + 10)) + 85;
     this.game.add.sprite(x, y, order, null, this.selectedOrders);
+    this.game.add.text(x, y, priority, { fill: 'white' }, this.selectedOrders);
   }
 }
