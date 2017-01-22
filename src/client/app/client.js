@@ -23,13 +23,7 @@ export default class ExterminateClient {
 
   preload() {
     this.game.load.spritesheet('orders', 'assets/images/orders.jpg', 200, 200, 7);
-    this.game.load.image('backward', 'assets/images/icons/backward.jpg');
-    this.game.load.image('forward1', 'assets/images/icons/forward1.jpg');
-    this.game.load.image('forward2', 'assets/images/icons/forward2.jpg');
-    this.game.load.image('forward3', 'assets/images/icons/forward3.jpg');
-    this.game.load.image('left', 'assets/images/icons/left.jpg');
-    this.game.load.image('right', 'assets/images/icons/right.jpg');
-    this.game.load.image('uturn', 'assets/images/icons/uturn.jpg');
+    this.game.load.spritesheet('loader', 'assets/images/loader.png', 600, 600, 3);
   }
 
   create() {
@@ -54,6 +48,8 @@ export default class ExterminateClient {
   }
 
   handleConnection() {
+    document.querySelector('.splash-screen').style.display = 'none';
+
     this.game = new Phaser.Game(clientWidth, clientHeight, Phaser.AUTO, '', {
       preload: () => this.preload(),
       create: () => this.create(),

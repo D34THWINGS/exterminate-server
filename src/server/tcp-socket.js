@@ -88,7 +88,7 @@ export default class TcpSocket {
 
   sendGameStart(players) {
     this.socket.write(ServerEvents.GAME_STARTED);
-    players.forEach(player => this.socket.write(`.${player.id}`));
+    players.forEach(player => this.socket.write(`.${player.id}:${Math.round(Math.random())}`));
     this.socket.write('\n');
   }
 

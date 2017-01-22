@@ -32,6 +32,8 @@ module.exports = {
       to: './assets/images/',
     }, {
       from: './src/client/manifest.json',
+    }, {
+      from: './src/client/favicon.ico',
     }]),
   ],
 };
