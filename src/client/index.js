@@ -14,5 +14,5 @@ export default (() => {
     return null;
   }
 
-  return new ExterminateClient('192.168.43.128:8080');
+  return new ExterminateClient('localhost:8080');
 })();

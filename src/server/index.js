@@ -71,4 +71,4 @@ class ExterminateServer {
   }
 }
 
-export default new ExterminateServer('192.168.43.128', 8080);
+export default new ExterminateServer('localhost', 8080);
