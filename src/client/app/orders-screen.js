@@ -16,7 +16,7 @@ export default class OrdersScreen {
       .lineTo((3 / 4) * clientWidth, clientHeight);
     this.selectedText = this.game.add.text(((3 / 4) * clientWidth) + 30, 30, 'Selected:', {
       fill: 'white',
-      font: 'Overpass',
+      font: 'Overpass, sans-serif',
       fontSize: 30,
     }, this.group);
 
@@ -76,7 +76,7 @@ export default class OrdersScreen {
     const icon = this.game.add.sprite(x, y, 'orders', MOVES.indexOf(order), this.selectedOrders);
     this.game.add.text(x, y, priority, {
       fill: 'white',
-      font: 'Overpass',
+      font: 'Overpass, sans-serif',
       fontSize: 30,
     }, this.selectedOrders);
     icon.width = icon.height = size;

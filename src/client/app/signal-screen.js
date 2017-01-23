@@ -3,6 +3,7 @@ import Phaser from 'phaser-ce/build/custom/phaser-split';
 import { TRANSITION_TIME } from '../../shared/constants';
 
 const { clientWidth, clientHeight } = document.body;
+const noop = () => {};
 
 const POINTS_DENSITY = 1;
 const SIGNAL_TIMEOUT = 3000;
@@ -36,7 +37,7 @@ export default class SignalScreen {
 
     this.game.add.text(30, 30, 'Draw electric signal:', {
       fill: 'white',
-      font: 'Overpass',
+      font: 'Overpass, sans-serif',
       fontSize: 30,
     }, this.group);
 
@@ -46,7 +47,7 @@ export default class SignalScreen {
     this.onSignalEnd = new Phaser.Signal();
   }
 
-  showScreen(order, index, cb = () => {}) {
+  showScreen(order, index, cb = noop) {
     this.generateSignal(order, index);
 
     this.lockedPrecisions = [];
@@ -117,7 +118,7 @@ export default class SignalScreen {
       .endFill();
   }
 
-  endSignal() {
+  endSignal(withDispatch = true) {
     clearTimeout(this.signalTimeout);
 
     this.signalDrawingEnabled = false;
@@ -125,7 +126,9 @@ export default class SignalScreen {
 
     this.game.add.tween(this.group).to({ alpha: 0 }, 500, 'Linear', true).onComplete.addOnce(() => {
       this.group.visible = false;
-      this.onSignalEnd.dispatch(this.lockedPrecisions.reduce((v, p) => v + p, 0));
+      if (withDispatch) {
+        this.onSignalEnd.dispatch(this.lockedPrecisions.reduce((v, p) => v + p, 0));
+      }
     });
   }
 

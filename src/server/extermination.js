@@ -7,9 +7,9 @@ export default class Extermination {
    */
   constructor(server) {
     this.server = server;
-    this.started = false;
     this.players = [];
-    this.stockDeck = [];
+
+    this.reset();
   }
 
   addPlayer(socket) {
@@ -83,6 +83,11 @@ export default class Extermination {
       const playerDeck = this.generateDeck();
       player.sendDeck(playerDeck);
     });
+  }
+
+  reset() {
+    this.started = false;
+    this.stockDeck = [];
   }
 
   isAllPlayerReady() {

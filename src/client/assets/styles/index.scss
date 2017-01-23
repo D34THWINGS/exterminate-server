@@ -1,21 +1,32 @@
-html, body {
-  margin: 0;
-  background: #000;
-  width: 100%;
-  height: 100%;
-  font-family: 'Overpass', sans-serif;
-  color: white;
+.password-screen {
+  margin-top: 30px;
 }
 
-.splash-screen {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.password-input {
+  background: #111111;
+  border-radius: 0;
+  border: solid 2px #333333;
+  outline: none;
+  padding: 5px;
+  font-size: 30px;
+  color: #FFFFFF;
+  margin-right: 10px;
 }
 
-.splash-logo {
-  height: 30%;
+.password-submit {
+  background: #111111;
+  border: solid 2px #333333;
+  color: #FFFFFF;
+  padding: 5px 10px;
+  font-size: 30px;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background: #222222;
+  }
+}
+
+.password-logo {
+  height: 20%;
 }

@@ -6,11 +6,16 @@ export default class Player {
   constructor(socket) {
     this.id = uuid();
     this.socket = socket;
+    this.connected = true;
 
     this.orders = [];
   }
 
   sendDeck(deck) {
+    if (!this.connected) {
+      return;
+    }
+
     this.socket.emit('deck', deck);
   }
 

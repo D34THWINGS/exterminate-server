@@ -33,7 +33,7 @@ export default class DeckScreen {
 
     this.game.add.text(30, 30, 'Available moves:', {
       fill: 'white',
-      font: 'Overpass',
+      font: 'Overpass, sans-serif',
       fontSize: 30,
     }, this.group);
   }

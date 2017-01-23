@@ -8,16 +8,16 @@ export default class LoadingScreen {
 
     this.group = this.game.add.group();
 
-    this.loadingTitle = this.game.add.text(clientWidth / 2, (clientHeight / 2) + (clientHeight / 10), 'EXTERMINATE', {
+    this.loadingTitle = this.game.add.text(clientWidth / 2, (clientHeight / 2) + (clientHeight / 10), 'BotRace', {
       fill: 'white',
-      font: 'Overpass',
+      font: 'Overpass, sans-serif',
       fontSize: 60,
     }, this.group);
     this.loadingTitle.anchor.set(0.5, 0.5);
 
     this.loadingSubtitle = this.game.add.text(clientWidth / 2, (clientHeight / 2) + (clientHeight / 10) + 60, 'Awaiting game start...', {
       fill: 'white',
-      font: 'Overpass',
+      font: 'Overpass, sans-serif',
       fontSize: 30,
     }, this.group);
     this.loadingSubtitle.anchor.set(0.5, 0.5);
@@ -28,12 +28,16 @@ export default class LoadingScreen {
     this.loadingSprite.animations.play('load', 1, true);
     this.loadingSprite.width = this.loadingSprite.height = clientHeight / 5;
 
-    this.group.alpha = 1;
     this.tweener = this.game.add.tween(this.loadingSubtitle).to({ alpha: 0.3 }, 2000, 'Linear', true, 0, -1, true);
+  }
+
+  showScreen() {
+    this.tweener.start();
+    this.game.add.tween(this.group).to({ alpha: 1 }, TRANSITION_TIME, 'Linear', true);
   }
 
   hideScreen() {
     this.tweener.stop();
-    this.tweener = this.game.add.tween(this.group).to({ alpha: 0 }, TRANSITION_TIME, 'Linear', true);
+    this.game.add.tween(this.group).to({ alpha: 0 }, TRANSITION_TIME, 'Linear', true);
   }
 }

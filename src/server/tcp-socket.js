@@ -67,6 +67,7 @@ export default class TcpSocket {
 
   handleSocketClose() {
     this.server.httpServer.log('info', 'TCP socket disconnected');
+    this.server.exterminate.reset();
   }
 
   /**
